@@ -1,4 +1,5 @@
-﻿namespace HelloWorld;
+﻿
+
 
 class Program
 {
