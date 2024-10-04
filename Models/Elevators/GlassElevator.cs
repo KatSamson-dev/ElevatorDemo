@@ -1,4 +1,4 @@
-using Models.Elevator;
+using Models.Elevators;
 
 public class GlassElevator : Elevator
 {
@@ -7,5 +7,6 @@ public class GlassElevator : Elevator
         this.Type = ElevatorType.Glass;
         this.Description = "A clear (not bullet proof) elevator!";
         this.WeightLimit = 5;
+        this.Orders = new List<ElevatorOrders>();
     }    
 }

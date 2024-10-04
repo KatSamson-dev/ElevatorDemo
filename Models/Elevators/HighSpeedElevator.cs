@@ -1,4 +1,4 @@
-using Models.Elevator;
+using Models.Elevators;
 
 public class HighspeedElevator : Elevator
 {
@@ -7,5 +7,6 @@ public class HighspeedElevator : Elevator
         this.Type = ElevatorType.HighSpeed;
         this.Description = "This one goes really fast!";
         this.WeightLimit = 10;
+        this.Orders = new List<ElevatorOrders>();
     }    
 }
