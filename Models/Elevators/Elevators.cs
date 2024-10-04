@@ -1,4 +1,3 @@
-using System.Diagnostics.Contracts;
 
 namespace Models.Elevators; 
 
@@ -22,9 +21,12 @@ public class Elevator
 
     public int WeightLimit;
 
-    public bool IsCalled;
+    public int CurrentWeight;
 
     public int CurrentFloor;
+
+    public bool IsMovingUp = false;
+    
 
     public List<ElevatorOrders> Orders;
 }
