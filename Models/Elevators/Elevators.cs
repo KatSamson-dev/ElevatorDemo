@@ -25,7 +25,7 @@ public class Elevator
 
     public int CurrentFloor;
 
-    public bool IsMovingUp = false;
+    public bool IsMovingUp;
     
 
     public List<ElevatorOrders> Orders;

@@ -1,16 +1,16 @@
 using Models.Elevators;
 
-namespace Contollers.ElevatorControllers;
+namespace Contollers;
 
 /// <summary>
 /// This Controller can be seen as the board which controls all the elevators in the building. When constructed, it will take in a lsit of elevators
 /// and initialise the board
 /// </summary>
-public class ElevatorControllers
+public class ElevatorController
 {
-    public ElevatorControllers(List<Elevator> elevators)
+    public ElevatorController(List<Elevator> elevators)
     {
-            if(elevators.Count > 0)
+            if(elevators.Any())
             {
                 ActiveElevators = elevators;
             }
@@ -23,14 +23,14 @@ public class ElevatorControllers
     /// This is contained within this domain as both the orders and the elevator movements are within scope of this controller.
     /// </summary>
     public void updateElevators()
-    {
+    {        
         //Only performing this function on elevators where orders exist for efficiency.
-        foreach(var elevator in ActiveElevators.Where(x => x.Orders.Count > 0))
+        foreach(var elevator in ActiveElevators.Where(x => x.Orders.Any()))
         {            
             if(elevator.IsMovingUp)
             {
                 elevator.Orders.Sort();
-                ElevatorOrders currentOrder = elevator.Orders.First(x => x.Floor >= elevator.CurrentFloor);
+                ElevatorOrders? currentOrder = elevator.Orders.First(x => x.Floor >= elevator.CurrentFloor);
 
                 if(currentOrder != null)
                 {
@@ -40,7 +40,7 @@ public class ElevatorControllers
                     }
                     else if(currentOrder.Floor == elevator.CurrentFloor) 
                     {
-                        elevator.CurrentWeight = elevator.CurrentWeight - (currentOrder.Passengers*75);
+                        elevator.CurrentWeight = elevator.CurrentWeight - currentOrder.Passengers;
                         elevator.Orders.Remove(currentOrder);
                     }
                     else
@@ -56,8 +56,14 @@ public class ElevatorControllers
             }
             else
             {
-                elevator.Orders.Sort();
-                ElevatorOrders currentOrder = elevator.Orders.First(x => x.Floor <= elevator.CurrentFloor);
+                /*I am using orderby. If I was in a usecase where I was sorting a large list I would use a merge sort where I am splitting the list in halves and
+                 and then recursively calling the list until the sublists are split down to one item and merging at the end of each function until back to the full list.
+                 I would also make this more efficient by removing and rows where the floor is already greater in the order than the current floor.
+                 The same would apply for the previous section but by removing where the current floor is already less
+                  */
+                
+                elevator.Orders.OrderBy(x => x.Floor);
+                ElevatorOrders? currentOrder = elevator.Orders.First(x => x.Floor <= elevator.CurrentFloor);
 
                 if(currentOrder != null)
                 {
@@ -67,7 +73,7 @@ public class ElevatorControllers
                     }
                     else if(currentOrder.Floor == elevator.CurrentFloor) 
                     {
-                        elevator.CurrentWeight = elevator.CurrentWeight - (currentOrder.Passengers*75);
+                        elevator.CurrentWeight = elevator.CurrentWeight - currentOrder.Passengers;
                         elevator.Orders.Remove(currentOrder);
                     }
                     else
@@ -85,20 +91,63 @@ public class ElevatorControllers
     }  
 
     /// <summary>
-    /// Using a order, the function calculates the best and most efficient elevator to call and then puts that order into that elevators current order list
+    /// Using a order and where the elevator is being called to, the function calculates the best and most efficient elevator to call and then 
+    /// puts that order into that elevators current order list
     /// 
-    /// For the sake of this example, I am assuming that the elevator immediately picks up the passengers when called however in a more practical approach,
-    /// I would consider factoring int he movements of the elevators so that actually passengers are picked up along the path and not by the closest elevator.
-    /// 
-    /// This approach would make more sense realistically and I would do it by adding a queue of new orders and then adding the order to the elevator that first reaches the list
-    /// however this would not technically be the most efficient way.
+    /// In this implementation, I am assuming that when the call is made the most optimum elevator immediately goes to the floor where the order was made however
+    /// This is unrealistic and does not accomodate for passengers who are on the elevator to get off. If I were to implement that, I would effectively be calling the
+    /// updateElevators function above until the current floor equals the floor where the order was called.
     /// </summary>
     /// <param name="newOrder"></param>
-    /// <returns></returns>
-    public Elevator CallElevator(ElevatorOrders newOrder)  
+    /// <returns>a potentially nullable elevator object indicating that an elevator ws sent to pick up the order if it is not null.</returns>
+    public Elevator? CallElevator(ElevatorOrders newOrder, int currentPassengerFloor)  
     {
+        Elevator? closestElevator = new Elevator();
+        //First check if there are any Elevators currently with no orders and that can carry the weight.
+        //Then select the closest lift
+        var inActiveElevators = ActiveElevators.Where(x => !x.Orders.Any() && x.WeightLimit >= newOrder.Passengers);
         
+        if(inActiveElevators.Any())
+        {
+            //Here we are selecting the closest elevator 
+            closestElevator = inActiveElevators.OrderBy(x => Math.Abs(x.CurrentFloor - currentPassengerFloor)).FirstOrDefault();
 
-        return new Elevator();
+            closestElevator.Orders.Add(newOrder);
+            closestElevator.CurrentWeight = closestElevator.CurrentWeight + newOrder.Passengers;
+            closestElevator.CurrentFloor = currentPassengerFloor;
+            if (closestElevator.CurrentFloor < newOrder.Floor)
+                closestElevator.IsMovingUp = true;
+            else
+                closestElevator.IsMovingUp = false;
+        }
+        else
+        {
+            //If we are in here, then there are no inactive elevators. First we get the lifts that can carry the weight
+            var applicableElevators = ActiveElevators.Where(x => x.WeightLimit < x.CurrentWeight + newOrder.Passengers);
+
+            //In the event that there are no available elevators, the new order would likely have to be called again at a point where one was free. This is
+            //in line with what we expect however to improve this implementation I would setup a pending queue for pending orders that could not be fulfilled
+            if(applicableElevators == null) throw new Exception("There are no available elevators that can accomodate the required load");
+
+            //The logic here is we first order the list by the elevators that are closest to the order floor, we then select the first elevator that is already
+            //moving in the direction of the floor
+            closestElevator = applicableElevators.OrderBy(x => Math.Abs(x.CurrentFloor - currentPassengerFloor)).FirstOrDefault(
+                y => (y.IsMovingUp && currentPassengerFloor > y.CurrentFloor) || (!y.IsMovingUp && currentPassengerFloor < y.CurrentFloor)
+            );
+
+            if(closestElevator == null)
+            {
+                //This is for the case where there are no elevators moving in the direction we want. Here I jsut choose the closest floor but in reality, there would
+                //Be an algorithm to pause the order onboarding until an elevator is available. Because I am using linq I am also updating the object here which
+                //points to the original list
+                closestElevator = applicableElevators.OrderBy(x => Math.Abs(x.CurrentFloor - currentPassengerFloor)).FirstOrDefault();
+            }
+
+            closestElevator.Orders.Add(newOrder);
+            closestElevator.CurrentWeight = closestElevator.CurrentWeight + newOrder.Passengers;
+            closestElevator.CurrentFloor = currentPassengerFloor;            
+        }
+
+        return closestElevator;
     }
 }
