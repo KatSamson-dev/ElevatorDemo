@@ -50,7 +50,11 @@ public class ElevatorController
                     }                    
                     else
                     {
-                        //Edge case, dont see it reaching here but usually I would do an analysis 
+                        //We actually need to change directions here however we will only reach this point if we some how got here with the incorrect direction flag
+                        if(currentOrder.Floor < elevator.CurrentFloor)
+                            elevator.IsMovingUp = false;
+                        else if(currentOrder.Floor == elevator.CurrentFloor)
+                            elevator.Orders.Remove(currentOrder); 
                     }
                 }
                 else
@@ -82,9 +86,13 @@ public class ElevatorController
                             elevator.Orders.Remove(currentOrder);
                         }
                     }
-                    else
+                    else 
                     {
-                        //Edge case, dont see it reaching here but usually I would do an analysis 
+                        //We actually need to change directions here however we will only reach this point if we some how got here with the incorrect direction flag
+                        if(currentOrder.Floor > elevator.CurrentFloor)
+                            elevator.IsMovingUp = true;
+                        else if(currentOrder.Floor == elevator.CurrentFloor)
+                            elevator.Orders.Remove(currentOrder); 
                     }
                 }
                 else
