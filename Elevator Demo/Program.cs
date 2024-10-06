@@ -18,17 +18,17 @@ class Program
         initList.Add(new GlassElevator());
 
         //This block is to make it easier to demo the program
-        //Random random = new Random();
+        Random random = new Random();
 
-        //foreach(var elevator in initList)
-        //{
-        //    for(int i = 0; i < random.Next(1, 2); i++)
-        //    {
-        //        int passenger = random.Next(1, 5);
-        //        elevator.Orders.Add(new ElevatorOrders(random.Next(1, 10), passenger));
-        //        elevator.CurrentWeight = elevator.CurrentWeight + passenger;
-        //    }
-        //}
+        foreach (var elevator in initList)
+        {
+            for (int i = 0; i < random.Next(1, 2); i++)
+            {
+                int passenger = random.Next(1, 5);
+                elevator.Orders.Add(new ElevatorOrders(random.Next(1, 10), passenger));
+                elevator.CurrentWeight = elevator.CurrentWeight + passenger;
+            }
+        }
         #endregion
 
         ElevatorController elevatorController = new ElevatorController(initList);
@@ -56,7 +56,7 @@ class Program
                     Console.WriteLine($"{e.Message}");
                 }
 
-                //I moved this logic into a view layer to give the idea of a MVP design pattern
+                //I moved this logic into a view layer to give the idea of a MVC design pattern
                 elevatorControlBoard.DisplayBoard(elevatorController.ActiveElevators);
 
                 isUpdating = false;
