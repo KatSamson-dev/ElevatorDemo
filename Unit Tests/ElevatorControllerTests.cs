@@ -12,6 +12,9 @@ namespace Unit_Tests
     
     public class ElevatorControllerTests
     {
+        /// <summary>
+        /// THe following test will check that the elevator positions will update on a unique set of elevators
+        /// </summary>
         [TestMethod]
         public void ElevatorControllerUpdatesUnique_tests()
         {
@@ -39,6 +42,9 @@ namespace Unit_Tests
 
         }
 
+        /// <summary>
+        /// The following test will check that the elevator updates even when there are multiple types of elevators
+        /// </summary>
         [TestMethod]
         public void ElevatorControllerUpdatesDuplicates_tests()
         {
@@ -66,6 +72,9 @@ namespace Unit_Tests
             Assert.IsFalse(_elevatorController.ActiveElevators.Any(x => x.Orders.Any()));
         }
 
+        /// <summary>
+        /// The following test checks to see that when all elevators are available, it can call for one to pick up passengers
+        /// </summary>
         [TestMethod]
         public void AddElevatorOrderAllAvailable_tests() 
         {
@@ -88,6 +97,9 @@ namespace Unit_Tests
             Assert.IsNotNull(elevator);
         }
 
+        /// <summary>
+        /// The following test checks that an elevator can be called based on which is the most optimum
+        /// </summary>
         [TestMethod]
         public void AddElevatorOrder_tests()
         {
@@ -115,6 +127,10 @@ namespace Unit_Tests
             Assert.IsNotNull(calledElevator);
         }
 
+        /// <summary>
+        /// The following test checks that the system can accomodate when no elevators are available by returning a null value. This value is used in the program file
+        /// to indicate none was available. 
+        /// </summary>
         [TestMethod]
         public void AddElevatorOrderNoneAvailable_tests()
         {
