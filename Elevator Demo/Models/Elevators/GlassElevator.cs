@@ -6,7 +6,7 @@ public class GlassElevator : Elevator
     {
         this.Type = ElevatorType.Glass;
         this.Description = "A clear (not bullet proof) elevator!";
-        this.WeightLimit = 5;
+        this.WeightLimit = 10;
         this.Orders = new List<ElevatorOrders>();
         this.IsMovingUp = true; //Elevator always starts on floor 0
     }    
