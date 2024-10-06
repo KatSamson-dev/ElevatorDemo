@@ -14,6 +14,10 @@ moving in the direction of the calling floor and which is the closest
 
 The Unit testing appication tests the Update and calling functionality of the main application.
 
+Included is also a rough diagram to show how analytics could be gathered on the elevators and used to generate insights such as foot traffic in the building
+and when to clean certain floors. The idea here is that the controller would access data coming from edge computers on the elevators and then transfer that data
+to a server where building operations would be running. That data is then ingested to azure through a pipeline resulting in BI dashboards.
+
 ##Dependencies
 No external dependencies are required to build the application however draw.io is required for system design files
 

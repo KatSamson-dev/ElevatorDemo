@@ -1,0 +1,2 @@
+In this type of spec I would normally like to dictate the project SDLC including things such as branch management, source control maintenance,
+deployment patterns, the type of agile/waterfall methodology etc. Though in a real world scenario this would be stored on a KMS and linked to the ADO board

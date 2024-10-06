@@ -1,0 +1,4 @@
+In this type of file I would store the base spec of the project that should outline the base requirements and solution design including sequence diagrams,
+data models, process flows etc with the idea to cover all levels of the C4 model to a degree appropriate to the solution.
+Though in a real world scenario this would be stored on a KMS and linked to the ADO board however these specs are useful for outlining projects before implementation
+begins and to better educate user stories that are added.
