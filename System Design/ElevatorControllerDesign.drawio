@@ -90,6 +90,12 @@
         <mxCell id="HESK5Comx3yYh3DtOV38-49" value="Power BI&amp;nbsp;&lt;div&gt;Dashboard&lt;/div&gt;" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/analytics/Power_BI_Embedded.svg;" vertex="1" parent="1">
           <mxGeometry x="1000" y="240" width="51" height="68" as="geometry" />
         </mxCell>
+        <mxCell id="HESK5Comx3yYh3DtOV38-51" value="The main usecase of building out advanced analytics is to understand elevator patterns so that&lt;div style=&quot;font-size: 15px;&quot;&gt;&amp;nbsp;we can predict things such as:&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;1. When the elevators are most active&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;2. Which floors are receiving the most traffic&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;We can then use this data to educate things such as, when we can turn off certain elevators or to&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;help assist in determining when would be the best opportunity to clean certain floors&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=15;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="20" y="420" width="670" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="HESK5Comx3yYh3DtOV38-52" value="The idea here is that edge computers are attached to each elevator&lt;div&gt;which then transfer data to the controller. The controller then transfers data to a SQL server&amp;nbsp;&lt;/div&gt;&lt;div&gt;where the data can be stored. This same server in a real world scenario is probably running some&lt;/div&gt;&lt;div&gt;kind of building management software or streaming data to a cloud app.&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="20" width="540" height="70" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
