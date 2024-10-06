@@ -8,5 +8,6 @@ public class HighspeedElevator : Elevator
         this.Description = "This one goes really fast!";
         this.WeightLimit = 10;
         this.Orders = new List<ElevatorOrders>();
+        this.IsMovingUp = true; //Elevator always starts on floor 0
     }    
 }

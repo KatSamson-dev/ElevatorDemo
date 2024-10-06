@@ -1,6 +1,6 @@
 using Models.Elevators;
 
-namespace Contollers;
+namespace ElevatorDemo.Contollers;
 
 /// <summary>
 /// This Controller can be seen as the board which controls all the elevators in the building. When constructed, it will take in a lsit of elevators
@@ -14,6 +14,10 @@ public class ElevatorController
             {
                 ActiveElevators = elevators;
             }
+            else
+            {
+                throw new Exception("No Elevators Could Be Found");
+            }    
     }
 
     public List<Elevator> ActiveElevators;
@@ -30,19 +34,20 @@ public class ElevatorController
             if(elevator.IsMovingUp)
             {
                 elevator.Orders.Sort();
-                ElevatorOrders? currentOrder = elevator.Orders.First(x => x.Floor >= elevator.CurrentFloor);
+                ElevatorOrders? currentOrder = elevator.Orders.FirstOrDefault(x => x.Floor >= elevator.CurrentFloor);
 
                 if(currentOrder != null)
                 {
                     if(currentOrder.Floor > elevator.CurrentFloor) 
                     {
-                        elevator.CurrentFloor++ ;
-                    }
-                    else if(currentOrder.Floor == elevator.CurrentFloor) 
-                    {
-                        elevator.CurrentWeight = elevator.CurrentWeight - currentOrder.Passengers;
-                        elevator.Orders.Remove(currentOrder);
-                    }
+                        elevator.CurrentFloor++;
+
+                        if (currentOrder.Floor == elevator.CurrentFloor)
+                        {
+                            elevator.CurrentWeight = elevator.CurrentWeight - currentOrder.Passengers;
+                            elevator.Orders.Remove(currentOrder);
+                        }
+                    }                    
                     else
                     {
                         //Edge case, dont see it reaching here but usually I would do an analysis 
@@ -63,18 +68,19 @@ public class ElevatorController
                   */
                 
                 elevator.Orders.OrderBy(x => x.Floor);
-                ElevatorOrders? currentOrder = elevator.Orders.First(x => x.Floor <= elevator.CurrentFloor);
+                ElevatorOrders? currentOrder = elevator.Orders.FirstOrDefault(x => x.Floor <= elevator.CurrentFloor);
 
                 if(currentOrder != null)
                 {
                     if(currentOrder.Floor < elevator.CurrentFloor) 
                     {
                         elevator.CurrentFloor-- ;
-                    }
-                    else if(currentOrder.Floor == elevator.CurrentFloor) 
-                    {
-                        elevator.CurrentWeight = elevator.CurrentWeight - currentOrder.Passengers;
-                        elevator.Orders.Remove(currentOrder);
+
+                        if (currentOrder.Floor == elevator.CurrentFloor)
+                        {
+                            elevator.CurrentWeight = elevator.CurrentWeight - currentOrder.Passengers;
+                            elevator.Orders.Remove(currentOrder);
+                        }
                     }
                     else
                     {
@@ -123,11 +129,10 @@ public class ElevatorController
         else
         {
             //If we are in here, then there are no inactive elevators. First we get the lifts that can carry the weight
-            var applicableElevators = ActiveElevators.Where(x => x.WeightLimit < x.CurrentWeight + newOrder.Passengers);
+            var applicableElevators = ActiveElevators.Where(x => x.WeightLimit > x.CurrentWeight + newOrder.Passengers);
 
-            //In the event that there are no available elevators, the new order would likely have to be called again at a point where one was free. This is
-            //in line with what we expect however to improve this implementation I would setup a pending queue for pending orders that could not be fulfilled
-            if(applicableElevators == null) throw new Exception("There are no available elevators that can accomodate the required load");
+            //No available elevators that can carry load
+            if(!applicableElevators.Any()) return null;
 
             //The logic here is we first order the list by the elevators that are closest to the order floor, we then select the first elevator that is already
             //moving in the direction of the floor
@@ -137,11 +142,14 @@ public class ElevatorController
 
             if(closestElevator == null)
             {
-                //This is for the case where there are no elevators moving in the direction we want. Here I jsut choose the closest floor but in reality, there would
+                //This is for the case where there are no elevators moving in the direction we want. Here I just choose the closest floor but in reality, there would
                 //Be an algorithm to pause the order onboarding until an elevator is available. Because I am using linq I am also updating the object here which
                 //points to the original list
                 closestElevator = applicableElevators.OrderBy(x => Math.Abs(x.CurrentFloor - currentPassengerFloor)).FirstOrDefault();
             }
+
+            //Throw an exception if we somehow cannot find an elevator
+            if (closestElevator == null) throw new Exception("Elevator Could Not Be Found");
 
             closestElevator.Orders.Add(newOrder);
             closestElevator.CurrentWeight = closestElevator.CurrentWeight + newOrder.Passengers;

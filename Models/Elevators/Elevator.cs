@@ -13,8 +13,6 @@ namespace Models.Elevators;
 /// </summary>
 public class Elevator 
 {
-    public int ElevatorNumber;
-
     public ElevatorType Type;
 
     public string? Description;
